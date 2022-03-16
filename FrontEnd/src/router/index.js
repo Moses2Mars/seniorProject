@@ -7,6 +7,7 @@ import JobOpportunities from '../views/JobOpportunities.vue'
 import CheckJobApplicants from '../views/CheckJobApplicants.vue'
 import JobListing from '../views/JobListing.vue'
 import CreateJobs from '../views/CreateJobs.vue'
+import UploadCV from '../views/UploadCV.vue'
 
 Vue.use(VueRouter)
 
@@ -50,7 +51,18 @@ const routes = [
     component: JobListing,
     meta: { requiresAuth: true },
   },
+
+  {
+    path: '/UploadCV',
+    name: 'UploadCV',
+    component: UploadCV,
+    meta: { requiresAuth: true },
+  },
+
   { path: '*', redirect: '/' }
+
+
+
 ]
 
 const router = new VueRouter({

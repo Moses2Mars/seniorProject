@@ -21,9 +21,15 @@
                 <li class="nav-item" v-if="userType=='recruiter'">
                   <router-link to="/check-job-applicants" class="nav-link text-white">Check Job Applicants </router-link>
                 </li>
+                 <li class="nav-item" v-if="userType=='jobSeeker'">
+                  <router-link to="/UploadCV" class="nav-link text-white">Upload CV </router-link>
+                </li>
                 <li class="nav-item" v-if="isLoggedIn">
                   <button @click="logoutCurrentUser" class="nav-link contact text-black my-auto"> Log Out</button>
                 </li>
+                
+                
+
             </ul>
         </div>
       </div>

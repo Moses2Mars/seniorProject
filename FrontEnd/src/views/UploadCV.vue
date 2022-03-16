@@ -1,71 +1,69 @@
 <template>
   <div class="container mt-5" id="container">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
-    <div class="form-container sign-in-container">
-      <form role="form" @submit.prevent="loginUser">
-        <h1>Sign in</h1>
-        <div class="social-container">
-          <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a><br> 
-          <span>via linkedIn </span> 
+        <div class="form-container sign-in-container">
+         <form class="form" files="true" method="post" @submit.prevent="onSubmit" enctype="multipart/form-data">
+           <h1>Uploading CV</h1>
+        <div class="form-group">
+          
+            <label>File SK
+                <input type="file" multiple class="form-control-file" name="fileSk" id="fileSk" ref="fileSk"
+                       @change="fileSkUpload()"/>
+            </label>
         </div>
-        <span>or use your account</span>
-        <input type="email" placeholder="Email" v-model="user.email" required />
-        <input type="password" placeholder="Password" v-model="user.password" required />
-        <a href="#">Forgot your password?</a>
-        <button type="submit">Sign In</button>
-      </form>
-    </div>
-    <div class="overlay-container">
-      <div class="overlay">
-        <div class="overlay-panel overlay-right">
-          <h1 class="text-white">New Here?</h1>
-          <p class="text-white">Click The Button To Register For Free!</p>
-          <button class="ghost" id="signUp" @click="$router.push('/register')">Sign Up</button>
-        </div>
-      </div>
-    </div>
-  </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+          
+    </form>
+</div>
+</div>
+    
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      user: {
-        email: "",
-        password: "",
-      },
-    };
-  },
-  methods: {
-    loginUser() {
-      //we use store because we can use Vuex Persisted State to keep user logged in on refresh
-      this.$store.dispatch('login_module/authenticate', this.user)
-          .then( () => {
-              this.$vToastify.success('Login Successful!')
-              //take them to the home page
-              this.$router.push('/')
-          }).catch( (error) => {
-              console.error(error)
-              this.$vToastify.error('Please Check Credentials And Try Again!')
-              this.resetInputFields()
-          })
-    },
-    resetInputFields(){
-      this.user = {
-        email: "",
-        password: "",
-      }
-    },
-  },
-};
-</script>
+
+fileSkUpload(event) {
+    let files = event.target.files;
+    if (files.length) this.fileSk = files[0];
+},
+
+onSubmit() {
+    let data = new FormData();
+    data.append('fileSk', this.fileSK);
+    data.append('_method', 'put'); // add this
+
+    axios.post('/psu/list/store', {
+        data: this.data,
+    }).then(response => {
+        this.data = ''
+    }).catch(error => {
+        if (error.response.status === 422) {
+            this.errors = error.response.data.errors || {};
+        }
+    });
+},
+
+public function store(Request $request)
+{
+    $dokumen = new Dokumen();
+    $psu = new Psu();
+
+    $fileSk = $request->file('fileSk');
+    $data = $request->input('fileSk');
+    $extension = $fileSk->getClientOriginalExtension();
+
+    Storage::disk('uploads')->put($fileSk->getFileName() . '.' . $extension, File::get($file));
+
+    $dokumen->file_image_dokumen = $fileSk->getFileName() . '.' . $extension;
+
+    $dokumen->save();
+}
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css?family=Montserrat:400,800");
+
 * {
   box-sizing: border-box;
 }
+
 body {
   background: #f6f5f7;
   display: flex;
@@ -76,13 +74,16 @@ body {
   height: 100vh;
   margin: -20px 0 50px;
 }
+
 h1 {
   font-weight: bold;
   margin: 0;
 }
+
 h2 {
   text-align: center;
 }
+
 p {
   font-size: 14px;
   font-weight: 100;
@@ -90,15 +91,18 @@ p {
   letter-spacing: 0.5px;
   margin: 20px 0 30px;
 }
+
 span {
   font-size: 12px;
 }
+
 a {
   color: #333;
   font-size: 14px;
   text-decoration: none;
   margin: 15px 0;
 }
+
 button {
   
   cursor: pointer;
@@ -113,6 +117,7 @@ button {
   text-transform: uppercase;
   transition: transform 80ms ease-in;
 }
+
 button:hover{
   transition: 0.3s;
   background-color: #df4125;
@@ -121,16 +126,20 @@ button.ghost:hover{
   transition: 0.3s;
   background-color: #e64327;
 }
+
 button:active {
   transform: scale(0.95);
 }
+
 button:focus {
   outline: none;
 }
+
 button.ghost {
   background-color: transparent;
   border-color: #ffffff;
 }
+
 form {
   background-color: #ffffff;
   display: flex;
@@ -141,6 +150,7 @@ form {
   height: 100%;
   text-align: center;
 }
+
 input {
   border-radius: 8px;
   background-color: #eee;
@@ -149,6 +159,7 @@ input {
   margin: 8px 0;
   width: 100%;
 }
+
 .container {
   margin: auto;
   background-color: #fff;
@@ -160,44 +171,52 @@ input {
   max-width: 100%;
   min-height: 480px;
 }
+
 .form-container {
   position: absolute;
   top: 0;
   height: 100%;
   transition: all 0.6s ease-in-out;
 }
+
 .sign-in-container {
   left: 0;
   width: 50%;
   z-index: 2;
 }
+
 .container.right-panel-active .sign-in-container {
   transform: translateX(100%);
 }
+
 .sign-up-container {
   left: 0;
   width: 50%;
   opacity: 0;
   z-index: 1;
 }
+
 .container.right-panel-active .sign-up-container {
   transform: translateX(100%);
   opacity: 1;
   z-index: 5;
   animation: show 0.6s;
 }
+
 @keyframes show { 
   0%,
   49.99% {
     opacity: 0;
     z-index: 1;
   }
+
   50%,
   100% {
     opacity: 1;
     z-index: 5;
   }
 }
+
 .overlay-container {
   position: absolute;
   top: 0;
@@ -208,9 +227,11 @@ input {
   transition: transform 0.6s ease-in-out;
   z-index: 100;
 }
+
 .container.right-panel-active .overlay-container {
   transform: translateX(-100%);
 }
+
 .overlay {
   background: #ff416c;
   background: -webkit-linear-gradient(to right, #ff4b2b, #ff416c);
@@ -226,9 +247,11 @@ input {
   transform: translateX(0);
   transition: transform 0.6s ease-in-out;
 }
+
 .container.right-panel-active .overlay {
   transform: translateX(50%);
 }
+
 .overlay-panel {
   position: absolute;
   display: flex;
@@ -243,22 +266,28 @@ input {
   transform: translateX(0);
   transition: transform 0.6s ease-in-out;
 }
+
 .overlay-left {
   transform: translateX(-20%);
 }
+
 .container.right-panel-active .overlay-left {
   transform: translateX(0);
 }
+
 .overlay-right {
   right: 0;
   transform: translateX(0);
 }
+
 .container.right-panel-active .overlay-right {
   transform: translateX(20%);
 }
+
 .social-container {
   margin: 20px 0;
 }
+
 .social-container a {
   border: 1px solid #dddddd;
   border-radius: 50%;
@@ -269,6 +298,7 @@ input {
   height: 40px;
   width: 40px;
 }
+
 footer {
   background-color: #222;
   color: #fff;
@@ -280,12 +310,15 @@ footer {
   text-align: center;
   z-index: 999;
 }
+
 footer p {
   margin: 10px 0;
 }
+
 footer i {
   color: red;
 }
+
 footer a {
   color: #3c97bf;
   text-decoration: none;
