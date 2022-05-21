@@ -1,6 +1,6 @@
 <template>
     <div class="card-outline" :class="job.state">
-        <span class="job-header">{{job.position_required}} - {{job.company_name}}</span>
+        <span class="job-header">{{job.position_required}} <span v-if="is_candidate"> - {{job.company_name}} </span></span>
         <div class="job-field"> 
             <span class="static-text"> Field: </span> {{job.field_required}}
         </div>
@@ -14,14 +14,16 @@
                 {{job.expiry_date}} 
             </div>
         </div>
-        <span class="applicants-applied" v-if="!is_candidate"> 
-            <span class="static-text"> Applicants:</span> 
-            {{job.applicants_applied}}
-        </span> 
-        <span v-if="!is_candidate" class="job-list-state">
-            <span class="static-text"> State: </span>
-            {{job.state}}
-        </span> 
+        <div class="two-dates">
+            <span class="applicants-applied" v-if="!is_candidate"> 
+                <span class="static-text"> Applicants:</span> 
+                {{job.applicants_applied}}
+            </span> 
+            <span v-if="!is_candidate" class="job-list-state">
+                <span class="static-text"> State: </span>
+                {{job.state}}
+            </span>
+        </div>
     </div>
 </template>
 
@@ -37,6 +39,9 @@ export default {
             type: Boolean,
         }
     },
+    mounted() {
+        console.log('job', this.job)
+    }
 }
 </script>
 
@@ -51,9 +56,10 @@ export default {
     box-shadow: 8px 10px 10px -3px #909090;
     display: flex;
     flex-direction: column;
-    gap: 1em;
+    gap: 0.7em;
     align-items: center;
     justify-content: center;
+    text-transform: capitalize;
 }
 
 .static-text {
@@ -76,18 +82,17 @@ export default {
     background-color: rgb(63, 177, 48);
 }
 .Complete {
-    background-color: rgb(95, 95, 95);
-    color: white;
+    background-color: rgb(243, 111, 111);
 }
 .Complete:hover {
-    background-color: rgb(59, 59, 59);
+    background-color: rgb(231, 66, 66);
 }
 
 .Scheduled {
-    background-color: rgb(243, 111, 111);
+    background-color: rgb(149, 149, 149);
 }
 .Scheduled:hover {
-    background-color: rgb(231, 66, 66);
+    background-color: rgb(133, 133, 133);
     cursor: pointer;
 }
 
